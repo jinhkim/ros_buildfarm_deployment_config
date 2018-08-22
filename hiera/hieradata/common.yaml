@@ -1,6 +1,6 @@
 # username and password
-user::admin::name: admin
-user::admin::password_hash: 'tomato'
+user::admin::name: eisadmin
+user::admin::password_hash: 'tomato123!'
 
 # Jenkins username and password the agents should use to authenticate with the client.
 # Both master and repo machines have specific agents: agent_on_master and building_repostory respectively
@@ -10,7 +10,7 @@ jenkins::slave::ui_user: 'admin'
 jenkins::slave::ui_pass: 'tomato123!'
 
 # This should be unchanged so that the masterurl always uses the hosts entry to reach master.
-jenkins::slave::masterurl: 'http://master:8080'
+jenkins::slave::masterurl: 'http://192.168.0.86:8080'
 
 master::ip: 192.168.0.86
 repo::ip: 192.168.0.56
