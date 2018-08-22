@@ -9,7 +9,7 @@ function usage {
   exit 1
 }
 
-BUILDFARM_DEPLOYMENT_PATH=/root/buildfarm_deployment
+BUILDFARM_DEPLOYMENT_PATH=${HOME}/workspace/buildfarm_deployment
 BUILDFARM_DEPLOYMENT_URL=https://github.com/ros-infrastructure/buildfarm_deployment.git
 BUILDFARM_DEPLOYMENT_BRANCH=master
 
@@ -37,9 +37,9 @@ else
   echo $buildfarm_role > "${script_dir}/role"
 fi
 
-if [ ! -d /root/buildfarm_deployment ]; then
-  echo "/root/buildfarm_deplyment did not exist, cloning."
-  git clone $BUILDFARM_DEPLOYMENT_URL /root/buildfarm_deployment -b $BUILDFARM_DEPLOYMENT_BRANCH
+if [ ! -d ${HOME}/workspace/buildfarm_deployment ]; then
+  echo "$BUILDFARM_DEPLOYMENT_PATH did not exist, cloning."
+  git clone $BUILDFARM_DEPLOYMENT_URL ${HOME}/workspace/buildfarm_deployment -b $BUILDFARM_DEPLOYMENT_BRANCH
 fi
 
 echo "Copying in configuration"
