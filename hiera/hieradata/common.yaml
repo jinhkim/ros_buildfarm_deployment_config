@@ -1,15 +1,19 @@
+# username and password
+user::admin::name: admin
+user::admin::password_hash: 'tomato'
+
 # Jenkins username and password the agents should use to authenticate with the client.
 # Both master and repo machines have specific agents: agent_on_master and building_repostory respectively
 # That make use of this configuration as well.
 # If you use the GitHub authentication plugin with Jenkins you will want to set this to a GitHub username and access token.
 jenkins::slave::ui_user: 'admin'
-jenkins::slave::ui_pass: 'changeme'
+jenkins::slave::ui_pass: 'tomato123!'
 
 # This should be unchanged so that the masterurl always uses the hosts entry to reach master.
 jenkins::slave::masterurl: 'http://master:8080'
 
-master::ip: 172.30.1.145
-repo::ip: 172.30.1.69
+master::ip: 192.168.0.86
+repo::ip: 192.168.0.56
 
 # change this to match the timezone that this buildfarm is located in.
 timezone: 'America/Los_Angeles'
@@ -17,10 +21,16 @@ timezone: 'America/Los_Angeles'
 # SSH keys to be added to the system.
 # The example public key should be changed but the private key has been deliberately deleted rather than leaked.
 ssh_keys:
-    'ssh key comment / title':
-        key: AAAAB3NzaC1yc2EAAAADAQABAAABAQCXukygCeYbRCHP7IRxCIJpVTKYVtqIXRubANWVjGAQYEM+4FHca0ZCx/k+xOERj49ZIySXMOKdFlWELezYCnpJl6Q1qE2zPR4eSU/nEo9BwaCqbIrKoToND0L65goi4Ya/mKn3NBNkYJbAl+hHW0QQKhgyme5b1JgWZjkKX7b5eqzlkn0ic7hNUmRuj3gjJAvfvvMaVE0VIxnXSuw+SoxE8Q33qno4vtkxo8/6i1MpQgxB26e7UdeVY8xuUukByD0+pUARBMFlpOCu8ycMYcoMdJKiqVSRvn3/kg5lj39qro8kMwqR/m2nrTtZMiEfCNYSEuYNLjLUvRQbBGg8dxgp
+    'admin':
+        ensure: present
+        key: AAAAB3NzaC1yc2EAAAADAQABAAACAQDAWvW10WzMqZ8h8R3MLjcNiffouOO8C16LqjySO34NdhKEKGxSeoBpdqXmlyr9G2R3UisDX2iiEwwsIUiRyiK0S4AjY/d/CQ0SCL4WFAnkncug9aozNzYkmRkv5ySTKYxWZDNAuZISZwk7Y+BXJK0iXYy4HyGkyCGG3PoBeF9MTIMZ0QrFlwet5w9WE0adxQGJ6ioprcF2/tTxFOv8MNc0/lsSh/Ri91cJdxxQ9E7jEPgk19KRqEOquyQmh0Q/8Y9AsXedZVAbyrMQRz6z8pClKQdGEYC7ni6KlM95mMR/OBXTs4kvb1Y62gpMxp3+6uq8PUeMGpgKaeiQTFZlBUsfOjAtFcbRUd2ii7FejEVP0paTNzl68185wF24wpghS+huT+9uk087fLXIify2fgDK8ToIVqjm5/J+L/X/6BdG7WVUe3IMMk2iz2aJu2xcG42ZUaKlWnbkIgjw+aigakMG67jqV+4iCvP0AW/JoRu/Xkmx2RBd5B0HdsETszdobvxBxTAnOKIp3NSHIsapeq2lOGIkfrezTN9InZ3lSNgeRfgC0dAdlbDlf3fgMhaKIlhqFiRfOjK3yaXTv9vBMLOeR7ChA2fvxqwLwPRJEBc0c4+FbKMaydWoWDzT04+AGUCwgoDYyoGIsjLlIk55N8n4QSCgevWnLUfheLUZdZn6hQ==
         type: ssh-rsa
         user: root
+    'jinhkim github':
+        ensure: present
+        key: AAAAB3NzaC1yc2EAAAADAQABAAACAQDAWvW10WzMqZ8h8R3MLjcNiffouOO8C16LqjySO34NdhKEKGxSeoBpdqXmlyr9G2R3UisDX2iiEwwsIUiRyiK0S4AjY/d/CQ0SCL4WFAnkncug9aozNzYkmRkv5ySTKYxWZDNAuZISZwk7Y+BXJK0iXYy4HyGkyCGG3PoBeF9MTIMZ0QrFlwet5w9WE0adxQGJ6ioprcF2/tTxFOv8MNc0/lsSh/Ri91cJdxxQ9E7jEPgk19KRqEOquyQmh0Q/8Y9AsXedZVAbyrMQRz6z8pClKQdGEYC7ni6KlM95mMR/OBXTs4kvb1Y62gpMxp3+6uq8PUeMGpgKaeiQTFZlBUsfOjAtFcbRUd2ii7FejEVP0paTNzl68185wF24wpghS+huT+9uk087fLXIify2fgDK8ToIVqjm5/J+L/X/6BdG7WVUe3IMMk2iz2aJu2xcG42ZUaKlWnbkIgjw+aigakMG67jqV+4iCvP0AW/JoRu/Xkmx2RBd5B0HdsETszdobvxBxTAnOKIp3NSHIsapeq2lOGIkfrezTN9InZ3lSNgeRfgC0dAdlbDlf3fgMhaKIlhqFiRfOjK3yaXTv9vBMLOeR7ChA2fvxqwLwPRJEBc0c4+FbKMaydWoWDzT04+AGUCwgoDYyoGIsjLlIk55N8n4QSCgevWnLUfheLUZdZn6hQ==
+        type: ssh-rsa
+        user: eis
 
 
 # Known hosts to add to the jenkins-agent user.
@@ -32,7 +42,7 @@ ssh_keys:
 #     ssh repo -T cat /etc/ssh/ssh_host_ed25519_key.pub
 # will print your ed25519 host key which you can paste below
 ssh_host_keys:
-  repo: repo ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA+bpD1Hf9LB+VFN6V6xdRsTi05gPHd0l7LhWbDZpAQM
+  repo: repo ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOFOg1LA8mOaBgXtU8WBNxpYJGzJIzMqYVdOLW9Eficd
 
 # if `autoreconfigure` is true this will set a cron task to re-run puppet periodically.
 # Do not autoreconfigure your master machine during normal running, doing so will overwrite
