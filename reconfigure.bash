@@ -9,7 +9,53 @@ function usage {
   exit 1
 }
 
-BUILDFARM_DEPLOYMENT_PATH=/root/buildfarm_deployment
+vercomp () {
+    if [[ $1 == $2 ]]
+    then
+        return 0
+    fi
+    local IFS=.
+    local i ver1=($1) ver2=($2)
+    # fill empty fields in ver1 with zeros
+    for ((i=${#ver1[@]}; i<${#ver2[@]}; i++))
+    do
+        ver1[i]=0
+    done
+    for ((i=0; i<${#ver1[@]}; i++))
+    do
+        if [[ -z ${ver2[i]} ]]
+        then
+            # fill empty fields in ver2 with zeros
+            ver2[i]=0
+        fi
+        if ((10#${ver1[i]} > 10#${ver2[i]}))
+        then
+            return 1
+        fi
+        if ((10#${ver1[i]} < 10#${ver2[i]}))
+        then
+            return 2
+        fi
+    done
+    return 0
+}
+
+testvercomp () {
+    vercomp $1 $2
+    case $? in
+        0) op='=';;
+        1) op='>';;
+        2) op='<';;
+    esac
+    if [[ $op != $3 ]]
+    then
+        echo "FAIL: Expected '$3', Actual '$op', Arg1 '$1', Arg2 '$2'"
+    else
+        echo "Pass: '$1 $op $2'"
+    fi
+}
+
+BUILDFARM_DEPLOYMENT_PATH=${HOME}/workspace/buildfarm_deployment
 BUILDFARM_DEPLOYMENT_URL=https://github.com/ros-infrastructure/buildfarm_deployment.git
 BUILDFARM_DEPLOYMENT_BRANCH=master
 
@@ -37,9 +83,9 @@ else
   echo $buildfarm_role > "${script_dir}/role"
 fi
 
-if [ ! -d /root/buildfarm_deployment ]; then
-  echo "/root/buildfarm_deplyment did not exist, cloning."
-  git clone $BUILDFARM_DEPLOYMENT_URL /root/buildfarm_deployment -b $BUILDFARM_DEPLOYMENT_BRANCH
+if [ ! -d ${HOME}/workspace/buildfarm_deployment ]; then
+  echo "$BUILDFARM_DEPLOYMENT_PATH did not exist, cloning."
+  git clone $BUILDFARM_DEPLOYMENT_URL ${HOME}/workspace/buildfarm_deployment -b $BUILDFARM_DEPLOYMENT_BRANCH
 fi
 
 echo "Copying in configuration"
@@ -52,8 +98,27 @@ cd $BUILDFARM_DEPLOYMENT_PATH && git fetch origin && git reset --hard origin/$BU
 echo "Running librarian-puppet"
 (cd $BUILDFARM_DEPLOYMENT_PATH/ && librarian-puppet install --verbose)
 echo "Running puppet"
+
+INSTALLED_PUPPET_VERSION=$(puppet --version)
+DESIRED_MIN_PUPPET_VERSION="5.0.0"
+PUPPET_PARSER_OPTION=""
+
+vercomp $INSTALLED_PUPPET_VERSION $DESIRED_MIN_PUPPET_VERSION
+case $? in
+    0) op='=';;
+    1) op='>';;
+    2) op='<';;
+esac
+if [[ $op != '<' ]]
+then
+    echo "using newer puppet version $1 so ignore '--parser future' option"
+    PUPPET_PARSER_OPTION=""
+else
+    echo "puppet version $1 $op $2, use '--parser future' option"
+    PUPPET_PARSER_OPTION="--parser future"
+fi
 env FACTER_buildfarm_role="$buildfarm_role" puppet apply --verbose \
-  --parser future \
+  $PUPPET_PARSER_OPTION \
   --modulepath="${BUILDFARM_DEPLOYMENT_PATH}/modules" \
   --logdest /var/log/puppet.log \
   -e "include role::buildfarm::${buildfarm_role}" \
